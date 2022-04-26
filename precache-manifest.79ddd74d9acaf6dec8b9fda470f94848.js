@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/solid-stats/css/chunk-vendors.6548ee90.css"
   },
   {
-    "revision": "c7b32f413aaeae0a03788123b92b9eb2",
+    "revision": "1e5d08c9ab3b589a24faf0bf7b45024c",
     "url": "/solid-stats/index.html"
   },
   {
@@ -38,6 +38,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "a512c48fd2481172a12b211442f57904",
     "url": "/solid-stats/manifest.json"
+  },
+  {
+    "revision": "e292dc577603db189d1681f571cc62fb",
+    "url": "/solid-stats/pen1x.png"
   },
   {
     "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
