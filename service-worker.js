@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/solid-stats/precache-manifest.c2c602796c23a4351f7ec7a33bc327c1.js"
+  "/solid-stats/precache-manifest.42bce4df8b13a1eae8b2807b2ccc5921.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "solid-stats"});
