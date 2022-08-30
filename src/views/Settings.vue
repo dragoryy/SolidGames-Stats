@@ -72,18 +72,20 @@ export default {
     this.tag = this.getInfo().tag;
     this.theme = this.getInfo().theme;
     this.nick = this.getInfo().nick;
-    let s = await fetch(`stats.json`);
+    let s = await fetch(`./stats/sg/all_time/global_statistics.json`);
     s = await s.json();
-    for (let key in s.globalStatistics) {
-      let pName = s.globalStatistics[key].name;
+    for (let key in s) {
+      let pName = s[key].name;
       this.nicknames[pName] = null;
     }
-    for (let key in s.squadStatistics) {
-      this.squads.push(s.squadStatistics[key].prefix);
+    let squads = await fetch(`./stats/sg/all_time/squad_statistics.json`);
+    squads = await squads.json();
+    for (let key in squads) {
+      this.squads.push(squads[key].prefix);
     }
     this.squads.sort();
     this.squads.unshift("[Одиночки]");
-    let r = await fetch(`rotations_stats.json`);
+    let r = await fetch(`./stats/sg/rotations_info.json`);
     r = await r.json();
     for (let key in r) {
       let tStartDate = r[key].startDate;

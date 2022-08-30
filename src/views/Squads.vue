@@ -51,14 +51,16 @@
             <span
               v-if="this.choosed === this.period[0].title"
               class="tip"
-              v-tooltip="'Игроки у которых количество игр больше 20'"
+              v-tooltip="
+                'Игроки которые сыграли хотя бы одну игру за последние 4 недели'
+              "
               >Всего игроков</span
             >
             <span
               v-else
               class="tip"
               v-tooltip="
-                'Игроки у которых игр больше чем 15% от всех игр ротации'
+                'Игроки которые сыграли хотя бы одну игру за последние 4 недели'
               "
               >Всего игроков</span
             ></v-th
@@ -167,7 +169,6 @@ export default {
     loading: true,
     choosed: "За все время",
     period: [],
-    squads: [],
     server: ["Оба сервера", "Первый сервер", "Второй сервер"],
     sides: ["Обе стороны", "Красная сторона", "Синяя сторона"],
     serverChoosed: "Оба сервера",
@@ -177,16 +178,14 @@ export default {
     dataLoaded: false,
     currentRotation: "",
     firstServerRed: [
-      "[Slow]",
       "[W8]",
       "[FB]",
-      "[IT]",
       "[SOKIL]",
-      "[IRA]",
       "[AXE]",
       "[ORK]",
-      "[WHS]",
-      "[HH]",
+      "[DKK]",
+      "[GM]",
+      "[Creep]",
     ],
     firstServerBlue: [
       "[inTeam]",
@@ -206,8 +205,7 @@ export default {
       "[GROM]",
       "[TAG]",
       "[RL]",
-      "[DKK]",
-      "[GM]",
+      "[IT]",
     ],
     secondServerBlue: [
       "[WD]",
@@ -215,11 +213,11 @@ export default {
       "[SKIF]",
       "[RON]",
       "[SGYR]",
-      "[Creep]",
       "[ISKRA]",
       "[VOG]",
       "[CU]",
       "[Wagner]",
+      "[WHS]",
     ],
     redSide: [],
     blueSide: [],
@@ -229,13 +227,7 @@ export default {
     this.tab = M.Tabs.init(this.$refs.tab, {
       duration: 50,
     });
-    this.squads.push("[Одиночки]");
-    let s = await fetch(`stats.json`);
-    s = await s.json();
-    for (let key in s.squadStatistics) {
-      this.squads.push(s.squadStatistics[key].prefix);
-    }
-    let r = await fetch(`rotations_stats.json`);
+    let r = await fetch(`./stats/sg/rotations_info.json`);
     r = await r.json();
     for (let key in r) {
       let tStartDate = r[key].startDate;
@@ -308,122 +300,88 @@ export default {
     async r() {
       this.loading = true;
       this.n = [];
-      let r = await fetch(`stats.json`);
+      let r = await fetch(`./stats/sg/all_time/squad_statistics.json`);
       r = await r.json();
       let id = 1;
-      for (let key in r.squadStatistics) {
-        r.squadStatistics[key].id = id;
+      for (let key in r) {
+        r[key].id = id;
         id++;
-        this.n.push(r.squadStatistics[key]);
+        this.n.push(r[key]);
       }
       this.loading = false;
     },
     async rotationTable() {
       this.loading = true;
       this.n = [];
-      let r = await fetch(`rotations_stats.json`);
+      let rotationID = this.period.length - this.$refs.sq.selectedIndex;
+      let r = await fetch(
+        `./stats/sg/rotation_${rotationID}/squad_statistics.json`
+      );
       r = await r.json();
-      console.log(r);
-      let id = 1;
-      let rotationID = this.$refs.sq.selectedIndex;
       for (let key in r) {
-        if (r[key].startDate == this.period[rotationID].startDate) {
-          for (let key1 in r[key].stats.squad) {
-            if (
-              this.choosed.replace(/\s+/g, "") ==
-              this.currentRotation.replace(/\s+/g, "")
-            ) {
-              if (this.serverChoosed === "Первый сервер") {
-                r[key].stats.squad[key1].server = "1";
-                if (this.sideChoosed == "Красная сторона") {
-                  if (
-                    this.firstServerRed.includes(
-                      r[key].stats.squad[key1].prefix
-                    )
-                  ) {
-                    this.n.push(r[key].stats.squad[key1]);
-                  }
-                }
-                if (this.sideChoosed == "Синяя сторона") {
-                  if (
-                    this.firstServerBlue.includes(
-                      r[key].stats.squad[key1].prefix
-                    )
-                  ) {
-                    this.n.push(r[key].stats.squad[key1]);
-                  }
-                }
-                if (this.sideChoosed == "Обе стороны") {
-                  if (
-                    this.firstServerBlue.includes(
-                      r[key].stats.squad[key1].prefix
-                    ) ||
-                    this.firstServerRed.includes(
-                      r[key].stats.squad[key1].prefix
-                    )
-                  ) {
-                    this.n.push(r[key].stats.squad[key1]);
-                  }
-                }
+        if (
+          this.choosed.replace(/\s+/g, "") ==
+          this.currentRotation.replace(/\s+/g, "")
+        ) {
+          if (this.serverChoosed === "Первый сервер") {
+            r[key].server = "1";
+            if (this.sideChoosed == "Красная сторона") {
+              if (this.firstServerRed.includes(r[key].prefix)) {
+                this.n.push(r[key]);
               }
-              if (this.serverChoosed === "Второй сервер") {
-                r[key].stats.squad[key1].server = "2";
-                if (this.sideChoosed == "Красная сторона") {
-                  if (
-                    this.secondServerRed.includes(
-                      r[key].stats.squad[key1].prefix
-                    )
-                  ) {
-                    this.n.push(r[key].stats.squad[key1]);
-                  }
-                }
-                if (this.sideChoosed == "Синяя сторона") {
-                  if (
-                    this.secondServerBlue.includes(
-                      r[key].stats.squad[key1].prefix
-                    )
-                  ) {
-                    this.n.push(r[key].stats.squad[key1]);
-                  }
-                }
-                if (this.sideChoosed == "Обе стороны") {
-                  if (
-                    this.secondServerBlue.includes(
-                      r[key].stats.squad[key1].prefix
-                    ) ||
-                    this.secondServerRed.includes(
-                      r[key].stats.squad[key1].prefix
-                    )
-                  ) {
-                    this.n.push(r[key].stats.squad[key1]);
-                  }
-                }
+            }
+            if (this.sideChoosed == "Синяя сторона") {
+              if (this.firstServerBlue.includes(r[key].prefix)) {
+                this.n.push(r[key]);
               }
-              if (this.serverChoosed === "Оба сервера") {
-                if (
-                  this.secondServerRed.includes(
-                    r[key].stats.squad[key1].prefix
-                  ) ||
-                  this.secondServerBlue.includes(
-                    r[key].stats.squad[key1].prefix
-                  )
-                ) {
-                  r[key].stats.squad[key1].server = "2";
-                }
-                if (
-                  this.firstServerRed.includes(
-                    r[key].stats.squad[key1].prefix
-                  ) ||
-                  this.firstServerBlue.includes(r[key].stats.squad[key1].prefix)
-                ) {
-                  r[key].stats.squad[key1].server = "1";
-                }
-                this.n.push(r[key].stats.squad[key1]);
+            }
+            if (this.sideChoosed == "Обе стороны") {
+              if (
+                this.firstServerBlue.includes(r[key].prefix) ||
+                this.firstServerRed.includes(r[key].prefix)
+              ) {
+                this.n.push(r[key]);
               }
-            } else {
-              this.n.push(r[key].stats.squad[key1]);
             }
           }
+          if (this.serverChoosed === "Второй сервер") {
+            r[key].server = "2";
+            if (this.sideChoosed == "Красная сторона") {
+              if (this.secondServerRed.includes(r[key].prefix)) {
+                this.n.push(r[key]);
+              }
+            }
+            if (this.sideChoosed == "Синяя сторона") {
+              if (this.secondServerBlue.includes(r[key].prefix)) {
+                this.n.push(r[key]);
+              }
+            }
+            if (this.sideChoosed == "Обе стороны") {
+              if (
+                this.secondServerBlue.includes(r[key].prefix) ||
+                this.secondServerRed.includes(r[key].prefix)
+              ) {
+                this.n.push(r[key]);
+              }
+            }
+          }
+          if (this.serverChoosed === "Оба сервера") {
+            if (
+              this.secondServerRed.includes(r[key].prefix) ||
+              this.secondServerBlue.includes(r[key].prefix)
+            ) {
+              r[key].server = "2";
+            }
+            if (
+              this.firstServerRed.includes(r[key].prefix) ||
+              this.firstServerBlue.includes(r[key].prefix)
+            ) {
+              r[key].server = "1";
+            }
+            this.n.push(r[key]);
+          }
+        } else {
+          this.n.push(r[key]);
         }
       }
       this.loading = false;
@@ -431,14 +389,13 @@ export default {
     async reloadMace() {
       this.loading = true;
       this.n = [];
-      let r = await fetch(`stats_mace.json`);
+      let r = await fetch(`./stats/mace/squad_statistics.json`);
       r = await r.json();
       let id = 1;
-      console.log(r.squadStatistics);
-      for (let key in r.squadStatistics) {
-        r.squadStatistics[key].id = id;
+      for (let key in r) {
+        r[key].id = id;
         id++;
-        this.n.push(r.squadStatistics[key]);
+        this.n.push(r[key]);
       }
       this.loading = false;
     },

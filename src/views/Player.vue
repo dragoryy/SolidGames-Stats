@@ -40,6 +40,12 @@
             <v-th sortKey="name"><span>Ник</span></v-th>
             <v-th sortKey="totalPlayedGames"><span>Кол-во игр</span></v-th>
             <v-th sortKey="kills"><span>Убийств</span></v-th>
+            <v-th sortKey="killsFromVehicle"
+              ><span>Убийств из техники</span></v-th
+            >
+            <v-th sortKey="killsFromVehicleCoef"
+              ><span>Процент убийств из техники</span></v-th
+            >
             <v-th sortKey="vehicleKills"><span>Выбито техники</span></v-th>
             <v-th sortKey="teamkills"><span>Тимкиллов</span></v-th>
             <v-th sortKey="deaths.byTeamkills"><span>Смертей от ТК</span></v-th>
@@ -74,6 +80,8 @@
               </td>
               <td>{{ row.totalPlayedGames }}</td>
               <td>{{ row.kills }}</td>
+              <td>{{ row.killsFromVehicle }}</td>
+              <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
               <td>{{ row.vehicleKills }}</td>
               <td>{{ row.teamkills }}</td>
               <td>{{ row.deaths.byTeamkills }}</td>
@@ -104,6 +112,12 @@
                     ><span>Кол-во игр</span></v-th
                   >
                   <v-th sortKey="kills"><span>Убийств</span></v-th>
+                  <v-th sortKey="killsFromVehicle"
+                    ><span>Убийств из техники</span></v-th
+                  >
+                  <v-th sortKey="killsFromVehicleCoef"
+                    ><span>Процент убийств из техники</span></v-th
+                  >
                   <v-th sortKey="vehicleKills"
                     ><span>Выбито техники</span></v-th
                   >
@@ -136,6 +150,8 @@
                     <td>{{ row.startDate }} - {{ row.endDate }}</td>
                     <td>{{ row.totalPlayedGames }}</td>
                     <td>{{ row.kills }}</td>
+                    <td>{{ row.killsFromVehicle }}</td>
+                    <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
                     <td>{{ row.vehicleKills }}</td>
                     <td>{{ row.teamkills }}</td>
                     <td>{{ row.deaths.byTeamkills }}</td>
@@ -154,6 +170,34 @@
             </div>
             <div class="collapsible-body">
               <v-table :data="weapons" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Название оружия</span></v-th>
+                  <v-th sortKey="kills" defaultSort="desc"
+                    ><span>Убийств</span></v-th
+                  >
+                  <v-th sortKey="maxDistance"
+                    ><span>Макс. дистанция</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.kills }}</td>
+                    <td>{{ row.maxDistance }}м.</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="vehicles.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по технике</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="vehicles" class="responsive-table highlight">
                 <thead slot="head">
                   <th><span>Место</span></th>
                   <v-th sortKey="name"><span>Название оружия</span></v-th>
@@ -197,6 +241,12 @@
             <v-th sortKey="name"><span>Ник</span></v-th>
             <v-th sortKey="totalPlayedGames"><span>Кол-во игр</span></v-th>
             <v-th sortKey="kills"><span>Убийств</span></v-th>
+            <v-th sortKey="killsFromVehicle"
+              ><span>Убийств из техники</span></v-th
+            >
+            <v-th sortKey="killsFromVehicleCoef"
+              ><span>Процент убийств из техники</span></v-th
+            >
             <v-th sortKey="vehicleKills"><span>Выбито техники</span></v-th>
             <v-th sortKey="teamkills"><span>Тимкиллов</span></v-th>
             <v-th sortKey="deaths.byTeamkills"><span>Смертей от ТК</span></v-th>
@@ -228,6 +278,8 @@
               </td>
               <td>{{ row.totalPlayedGames }}</td>
               <td>{{ row.kills }}</td>
+              <td>{{ row.killsFromVehicle }}</td>
+              <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
               <td>{{ row.vehicleKills }}</td>
               <td>{{ row.teamkills }}</td>
               <td>{{ row.deaths.byTeamkills }}</td>
@@ -258,6 +310,12 @@
                     ><span>Кол-во игр</span></v-th
                   >
                   <v-th sortKey="kills"><span>Убийств</span></v-th>
+                  <v-th sortKey="killsFromVehicle"
+                    ><span>Убийств из техники</span></v-th
+                  >
+                  <v-th sortKey="killsFromVehicleCoef"
+                    ><span>Процент убийств из техники</span></v-th
+                  >
                   <v-th sortKey="vehicleKills"
                     ><span>Выбито техники</span></v-th
                   >
@@ -290,12 +348,70 @@
                     <td>{{ row.startDate }} - {{ row.endDate }}</td>
                     <td>{{ row.totalPlayedGames }}</td>
                     <td>{{ row.kills }}</td>
+                    <td>{{ row.killsFromVehicle }}</td>
+                    <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
                     <td>{{ row.vehicleKills }}</td>
                     <td>{{ row.teamkills }}</td>
                     <td>{{ row.deaths.byTeamkills }}</td>
                     <td>{{ row.deaths.total }}</td>
                     <td>{{ row.kdRatio }}</td>
                     <td>{{ row.score }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="weapons.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по оружию</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="weapons" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Название оружия</span></v-th>
+                  <v-th sortKey="kills" defaultSort="desc"
+                    ><span>Убийств</span></v-th
+                  >
+                  <v-th sortKey="maxDistance"
+                    ><span>Макс. дистанция</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.kills }}</td>
+                    <td>{{ row.maxDistance }}м.</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="vehicles.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по технике</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="vehicles" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Название оружия</span></v-th>
+                  <v-th sortKey="kills" defaultSort="desc"
+                    ><span>Убийств</span></v-th
+                  >
+                  <v-th sortKey="maxDistance"
+                    ><span>Макс. дистанция</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.kills }}</td>
+                    <td>{{ row.maxDistance }}м.</td>
                   </tr>
                 </tbody>
               </v-table>
@@ -327,6 +443,7 @@ export default {
     kdRatio: [],
     score: [],
     weeks: [],
+    vehicles: [],
   }),
   components: {
     Chart,
@@ -335,7 +452,7 @@ export default {
     this.tab = M.Tabs.init(this.$refs.tab, {
       duration: 50,
     });
-    let r = await fetch("../rotations_stats.json");
+    let r = await fetch(`../stats/sg/rotations_info.json`);
     r = await r.json();
     for (let key in r) {
       let tStartDate = r[key].startDate;
@@ -403,18 +520,31 @@ export default {
     },
     async r() {
       this.loading = true;
-      let r = await fetch(`../stats.json`);
+      let r = await fetch(`../stats/sg/all_time/global_statistics.json`);
       r = await r.json();
-      for (let key in r.globalStatistics) {
-        if (r.globalStatistics[key].name === this.$route.params.nick) {
-          if (r.globalStatistics[key].lastSquadPrefix === null) {
-            r.globalStatistics[key].lastSquadPrefix = "";
+      for (let key in r) {
+        if (r[key].name === this.$route.params.nick) {
+          if (r[key].lastSquadPrefix === null) {
+            r[key].lastSquadPrefix = "";
           }
-          this.n.push(r.globalStatistics[key]);
-          this.weapons = r.globalStatistics[key].weapons.map((w, i) => {
+          this.n.push(r[key]);
+          let playerWeapons = await fetch(
+            `../stats/sg/all_time/weapons_statistics/${this.$route.params.nick}.json`
+          );
+          playerWeapons = await playerWeapons.json();
+          let playerWeeks = await fetch(
+            `../stats/sg/all_time/weeks_statistics/${this.$route.params.nick}.json`
+          );
+          playerWeeks = await playerWeeks.json();
+          let playerVehicles = playerWeapons.vehicles;
+          playerWeapons = playerWeapons.firearms;
+          this.weapons = playerWeapons.map((w, i) => {
             return { ...w, id: i };
           });
-          this.byWeeks = r.globalStatistics[key].byWeeks;
+          this.vehicles = playerVehicles.map((w, i) => {
+            return { ...w, id: i };
+          });
+          this.byWeeks = playerWeeks;
         }
       }
       this.getDate();
@@ -425,20 +555,34 @@ export default {
     },
     async rotationTable() {
       this.loading = true;
-      let r = await fetch(`../rotations_stats.json`);
+      let rotationID = this.period.length - this.$refs.sl.selectedIndex;
+      let r = await fetch(
+        `../stats/sg/rotation_${rotationID}/global_statistics.json`
+      );
       r = await r.json();
-      let rotationID = this.$refs.sl.selectedIndex;
       for (let key in r) {
-        if (r[key].startDate === this.period[rotationID].startDate) {
-          for (let key1 in r[key].stats.global) {
-            if (r[key].stats.global[key1].name === this.$route.params.nick) {
-              this.n.push(r[key].stats.global[key1]);
-              this.byWeeks = r[key].stats.global[key1].byWeeks;
-              this.weapons = r[key].stats.global[key1].weapons.map((w, i) => {
-                return { ...w, id: i };
-              });
-            }
+        if (r[key].name === this.$route.params.nick) {
+          if (r[key].lastSquadPrefix === null) {
+            r[key].lastSquadPrefix = "";
           }
+          this.n.push(r[key]);
+          let playerWeapons = await fetch(
+            `../stats/sg/rotation_${rotationID}/weapons_statistics/${this.$route.params.nick}.json`
+          );
+          playerWeapons = await playerWeapons.json();
+          let playerVehicles = playerWeapons.vehicles;
+          playerWeapons = playerWeapons.firearms;
+          let playerWeeks = await fetch(
+            `../stats/sg/rotation_${rotationID}/weeks_statistics/${this.$route.params.nick}.json`
+          );
+          playerWeeks = await playerWeeks.json();
+          this.byWeeks = playerWeeks;
+          this.weapons = playerWeapons.map((w, i) => {
+            return { ...w, id: i };
+          });
+          this.vehicles = playerVehicles.map((w, i) => {
+            return { ...w, id: i };
+          });
         }
       }
       this.getDate();
@@ -449,16 +593,31 @@ export default {
     },
     async reloadMace() {
       this.loading = true;
-      let r = await fetch(`../stats_mace.json`);
+      let r = await fetch(`../stats/mace/global_statistics.json`);
       r = await r.json();
-      this.n.push(r.globalStatistics[0]);
-      for (let key in r.globalStatistics) {
-        if (r.globalStatistics[key].name === this.$route.params.nick) {
-          if (r.globalStatistics[key].lastSquadPrefix === null) {
-            r.globalStatistics[key].lastSquadPrefix = "";
+      for (let key in r) {
+        if (r[key].name === this.$route.params.nick) {
+          if (r[key].lastSquadPrefix === null) {
+            r[key].lastSquadPrefix = "";
           }
-          this.mace.push(r.globalStatistics[key]);
-          this.byWeeks = r.globalStatistics[key].byWeeks;
+          let playerWeapons = await fetch(
+            `../stats/mace/weapons_statistics/${this.$route.params.nick}.json`
+          );
+          playerWeapons = await playerWeapons.json();
+          let playerWeeks = await fetch(
+            `../stats/mace/weeks_statistics/${this.$route.params.nick}.json`
+          );
+          let playerVehicles = playerWeapons.vehicles;
+          playerWeapons = playerWeapons.firearms;
+          playerWeeks = await playerWeeks.json();
+          this.byWeeks = playerWeeks;
+          this.weapons = playerWeapons.map((w, i) => {
+            return { ...w, id: i };
+          });
+          this.vehicles = playerVehicles.map((w, i) => {
+            return { ...w, id: i };
+          });
+          this.mace.push(r[key]);
         }
       }
       this.getDate("mace");
@@ -491,12 +650,6 @@ export default {
         this.weeks.push(
           this.byWeeks[key].startDate + "-" + this.byWeeks[key].endDate
         );
-      }
-      if (gameType === "mace") {
-        this.weeks.reverse();
-        this.kills.reverse();
-        this.kdRatio.reverse();
-        this.score.reverse();
       }
     },
   },

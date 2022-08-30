@@ -36,6 +36,12 @@
           <v-th sortKey="name"><span>Ник</span></v-th>
           <v-th sortKey="totalPlayedGames"><span>Кол-во игр</span></v-th>
           <v-th sortKey="kills"><span>Убийств</span></v-th>
+          <v-th sortKey="killsFromVehicle"
+            ><span>Убийств из техники</span></v-th
+          >
+          <v-th sortKey="killsFromVehicleCoef"
+            ><span>Процент убийств из техники</span></v-th
+          >
           <v-th sortKey="vehicleKills"><span>Выбито техники</span></v-th>
           <v-th sortKey="teamkills"><span>Тимкиллов</span></v-th>
           <v-th sortKey="deaths.byTeamkills"><span>Смертей от ТК</span></v-th>
@@ -66,6 +72,8 @@
             </td>
             <td>{{ row.totalPlayedGames }}</td>
             <td>{{ row.kills }}</td>
+            <td>{{ row.killsFromVehicle }}</td>
+            <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
             <td>{{ row.vehicleKills }}</td>
             <td>{{ row.teamkills }}</td>
             <td>{{ row.deaths.byTeamkills }}</td>
@@ -91,6 +99,12 @@
           <v-th sortKey="name"><span>Ник</span></v-th>
           <v-th sortKey="totalPlayedGames"><span>Кол-во игр</span></v-th>
           <v-th sortKey="kills"><span>Убийств</span></v-th>
+          <v-th sortKey="killsFromVehicle"
+            ><span>Убийств из техники</span></v-th
+          >
+          <v-th sortKey="killsFromVehicleCoef"
+            ><span>Процент убийств из техники</span></v-th
+          >
           <v-th sortKey="vehicleKills"><span>Выбито техники</span></v-th>
           <v-th sortKey="teamkills"><span>Тимкиллов</span></v-th>
           <v-th sortKey="deaths.byTeamkills"><span>Смертей от ТК</span></v-th>
@@ -121,6 +135,8 @@
             </td>
             <td>{{ row.totalPlayedGames }}</td>
             <td>{{ row.kills }}</td>
+            <td>{{ row.killsFromVehicle }}</td>
+            <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
             <td>{{ row.vehicleKills }}</td>
             <td>{{ row.teamkills }}</td>
             <td>{{ row.deaths.byTeamkills }}</td>
@@ -154,14 +170,14 @@ export default {
     this.tab = M.Tabs.init(this.$refs.tab, {
       duration: 50,
     });
-    let s = await fetch(`stats.json`);
+    let s = await fetch(`./stats/sg/all_time/squad_statistics.json`);
     s = await s.json();
-    for (let key in s.squadStatistics) {
-      this.squads.push(s.squadStatistics[key].prefix);
+    for (let key in s) {
+      this.squads.push(s[key].prefix);
     }
     this.squads.sort();
     this.squads.unshift("[Одиночки]");
-    let r = await fetch(`rotations_stats.json`);
+    let r = await fetch(`./stats/sg/rotations_info.json`);
     r = await r.json();
     for (let key in r) {
       let tStartDate = r[key].startDate;
@@ -238,28 +254,30 @@ export default {
     async r() {
       this.loading = true;
       this.n = [];
-      let r = await fetch(`stats.json`);
+      let r = await fetch(`./stats/sg/all_time/global_statistics.json`);
       r = await r.json();
+      let squads = await fetch(`./stats/sg/all_time/squad_statistics.json`);
+      squads = await squads.json();
       let id = 1;
       let players = [];
       if (this.tag !== "[Одиночки]") {
-        players = r.squadStatistics.filter((sq) => sq.prefix === this.tag)[0]
-          .players;
+        players = squads.filter((sq) => sq.prefix === this.tag)[0].players;
+        players = players.map((p) => p.name);
       }
-      for (let key in r.globalStatistics) {
+      for (let key in r) {
         if (
-          r.globalStatistics[key].lastSquadPrefix === this.tag &&
-          players.indexOf(r.globalStatistics[key].name) > -1
+          r[key].lastSquadPrefix === this.tag &&
+          players.indexOf(r[key].name) > -1
         ) {
-          r.globalStatistics[key].id = id;
+          r[key].id = id;
           id++;
-          this.n.push(r.globalStatistics[key]);
+          this.n.push(r[key]);
         } else if (
-          r.globalStatistics[key].lastSquadPrefix === null &&
+          r[key].lastSquadPrefix === null &&
           this.tag === "[Одиночки]"
         ) {
-          r.globalStatistics[key].lastSquadPrefix = "";
-          this.n.push(r.globalStatistics[key]);
+          r[key].lastSquadPrefix = "";
+          this.n.push(r[key]);
         }
       }
       this.loading = false;
@@ -267,24 +285,21 @@ export default {
     async rotationTable() {
       this.loading = true;
       this.n = [];
-      let r = await fetch(`rotations_stats.json`);
+      let rotationID = this.period.length - this.$refs.sq.selectedIndex;
+      let r = await fetch(
+        `./stats/sg/rotation_${rotationID}/global_statistics.json`
+      );
       r = await r.json();
-      console.log(r);
       let id = 1;
-      let rotationID = this.$refs.sq.selectedIndex;
       for (let key in r) {
-        if (r[key].startDate === this.period[rotationID].startDate) {
-          for (let key1 in r[key].stats.global) {
-            if (r[key].stats.global[key1].lastSquadPrefix === this.tag) {
-              this.n.push(r[key].stats.global[key1]);
-            } else if (
-              r[key].stats.global[key1].lastSquadPrefix === null &&
-              this.tag === "[Одиночки]"
-            ) {
-              r[key].stats.global[key1].lastSquadPrefix = "";
-              this.n.push(r[key].stats.global[key1]);
-            }
-          }
+        if (r[key].lastSquadPrefix === this.tag) {
+          this.n.push(r[key]);
+        } else if (
+          r[key].lastSquadPrefix === null &&
+          this.tag === "[Одиночки]"
+        ) {
+          r[key].lastSquadPrefix = "";
+          this.n.push(r[key]);
         }
       }
       this.loading = false;
@@ -293,34 +308,37 @@ export default {
       this.error = false;
       this.loading = true;
       this.mace = [];
-      let r = await fetch(`stats_mace.json`);
+      let r = await fetch(`./stats/mace/global_statistics.json`);
       r = await r.json();
+      let squads = await fetch(`./stats/mace/squad_statistics.json`);
+      squads = await squads.json();
       let id = 1;
       let players = [];
       if (this.tag !== "[Одиночки]") {
-        players = r.squadStatistics.filter((sq) => sq.prefix === this.tag)[0];
+        players = squads.filter((sq) => sq.prefix === this.tag)[0];
         if (players) {
           players = players.players;
+          players = players.map((p) => p.name);
         } else {
           this.error = true;
           this.loading = false;
           return;
         }
       }
-      for (let key in r.globalStatistics) {
+      for (let key in r) {
         if (
-          r.globalStatistics[key].lastSquadPrefix === this.tag &&
-          players.indexOf(r.globalStatistics[key].name) > -1
+          r[key].lastSquadPrefix === this.tag &&
+          players.indexOf(r[key].name) > -1
         ) {
-          r.globalStatistics[key].id = id;
+          r[key].id = id;
           id++;
-          this.mace.push(r.globalStatistics[key]);
+          this.mace.push(r[key]);
         } else if (
-          r.globalStatistics[key].lastSquadPrefix === null &&
+          r[key].lastSquadPrefix === null &&
           this.tag === "[Одиночки]"
         ) {
-          r.globalStatistics[key].lastSquadPrefix = "";
-          this.mace.push(r.globalStatistics[key]);
+          r[key].lastSquadPrefix = "";
+          this.mace.push(r[key]);
         }
       }
       this.loading = false;

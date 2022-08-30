@@ -2,7 +2,8 @@
 node_modules
 /dist
 /Scripts
-
+/.firebase
+/public/stats
 
 # local env files
 .env.local

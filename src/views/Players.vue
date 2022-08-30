@@ -38,6 +38,12 @@
           <v-th sortKey="name"><span>Ник</span></v-th>
           <v-th sortKey="totalPlayedGames"><span>Кол-во игр</span></v-th>
           <v-th sortKey="kills"><span>Убийств</span></v-th>
+          <v-th sortKey="killsFromVehicle"
+            ><span>Убийств из техники</span></v-th
+          >
+          <v-th sortKey="killsFromVehicleCoef"
+            ><span>Процент убийств из техники</span></v-th
+          >
           <v-th sortKey="vehicleKills"><span>Выбито техники</span></v-th>
           <v-th sortKey="teamkills"><span>Тимкиллов</span></v-th>
           <v-th sortKey="deaths.byTeamkills"><span>Смертей от ТК</span></v-th>
@@ -68,6 +74,8 @@
             </td>
             <td>{{ row.totalPlayedGames }}</td>
             <td>{{ row.kills }}</td>
+            <td>{{ row.killsFromVehicle }}</td>
+            <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
             <td>{{ row.vehicleKills }}</td>
             <td>{{ row.teamkills }}</td>
             <td>{{ row.deaths.byTeamkills }}</td>
@@ -99,6 +107,12 @@
             ></v-th
           >
           <v-th sortKey="kills"><span>Убийств</span></v-th>
+          <v-th sortKey="killsFromVehicle"
+            ><span>Убийств из техники</span></v-th
+          >
+          <v-th sortKey="killsFromVehicleCoef"
+            ><span>Процент убийств из техники</span></v-th
+          >
           <v-th sortKey="vehicleKills"><span>Выбито техники</span></v-th>
           <v-th sortKey="teamkills"><span>Тимкиллов</span></v-th>
           <v-th sortKey="deaths.byTeamkills"><span>Смертей от ТК</span></v-th>
@@ -129,6 +143,8 @@
             </td>
             <td>{{ row.totalPlayedGames }}</td>
             <td>{{ row.kills }}</td>
+            <td>{{ row.killsFromVehicle }}</td>
+            <td>{{ Math.floor(row.killsFromVehicleCoef * 100) }}%</td>
             <td>{{ row.vehicleKills }}</td>
             <td>{{ row.teamkills }}</td>
             <td>{{ row.deaths.byTeamkills }}</td>
@@ -163,7 +179,7 @@ export default {
     this.tab = M.Tabs.init(this.$refs.tab, {
       duration: 50,
     });
-    let r = await fetch(`rotations_stats.json`);
+    let r = await fetch(`./stats/sg/rotations_info.json`);
     r = await r.json();
     for (let key in r) {
       let tStartDate = r[key].startDate;
@@ -224,26 +240,24 @@ export default {
     },
     async r() {
       this.loading = true;
-      let r = await fetch(`stats.json`);
+      let r = await fetch(`./stats/sg/all_time/global_statistics.json`);
       r = await r.json();
       let id = 1;
-      for (let key in r.globalStatistics) {
-        if (r.globalStatistics[key]) {
-          r.globalStatistics[key].id = id;
+      for (let key in r) {
+        if (r[key]) {
+          r[key].id = id;
           id++;
-          if (r.globalStatistics[key].lastSquadPrefix === null) {
-            r.globalStatistics[key].lastSquadPrefix = "";
+          if (r[key].lastSquadPrefix === null) {
+            r[key].lastSquadPrefix = "";
           }
           if (this.nick) {
             if (
-              r.globalStatistics[key].name
-                .toLowerCase()
-                .indexOf(this.nick.toLowerCase()) != -1
+              r[key].name.toLowerCase().indexOf(this.nick.toLowerCase()) != -1
             ) {
-              this.n.push(r.globalStatistics[key]);
+              this.n.push(r[key]);
             }
           } else {
-            this.n.push(r.globalStatistics[key]);
+            this.n.push(r[key]);
           }
         }
       }
@@ -251,54 +265,47 @@ export default {
     },
     async rotationTable() {
       this.loading = true;
-      let r = await fetch(`rotations_stats.json`);
+      let rotationID = this.period.length - this.$refs.sl.selectedIndex;
+      let r = await fetch(
+        `./stats/sg/rotation_${rotationID}/global_statistics.json`
+      );
       r = await r.json();
-      let id = 1;
-      let rotationID = this.$refs.sl.selectedIndex;
       for (let key in r) {
-        if (r[key].startDate === this.period[rotationID].startDate) {
-          for (let key1 in r[key].stats.global) {
-            if (r[key].stats.global[key1].lastSquadPrefix === null) {
-              r[key].stats.global[key1].lastSquadPrefix = "";
-            }
-            if (this.nick) {
-              if (
-                r[key].stats.global[key1].name
-                  .toLowerCase()
-                  .indexOf(this.nick.toLowerCase()) != -1
-              ) {
-                this.n.push(r[key].stats.global[key1]);
-              }
-            } else {
-              this.n.push(r[key].stats.global[key1]);
-            }
+        if (r[key].lastSquadPrefix === null) {
+          r[key].lastSquadPrefix = "";
+        }
+        if (this.nick) {
+          if (
+            r[key].name.toLowerCase().indexOf(this.nick.toLowerCase()) != -1
+          ) {
+            this.n.push(r[key]);
           }
+        } else {
+          this.n.push(r[key]);
         }
       }
       this.loading = false;
     },
     async reloadMace() {
       this.loading = true;
-      let r = await fetch(`stats_mace.json`);
+      let r = await fetch(`./stats/mace/global_statistics.json`);
       r = await r.json();
       let id = 1;
-      for (let key in r.globalStatistics) {
-        if (r.globalStatistics[key]) {
-          r.globalStatistics[key].id = id;
+      for (let key in r) {
+        if (r[key]) {
+          r[key].id = id;
           id++;
-          if (r.globalStatistics[key].lastSquadPrefix === null) {
-            r.globalStatistics[key].lastSquadPrefix = "";
+          if (r[key].lastSquadPrefix === null) {
+            r[key].lastSquadPrefix = "";
           }
           if (this.nick) {
             if (
-              r.globalStatistics[key].name
-                .toLowerCase()
-                .indexOf(this.nick.toLowerCase()) != -1
+              r[key].name.toLowerCase().indexOf(this.nick.toLowerCase()) != -1
             ) {
-              this.n.push(r.globalStatistics[key]);
+              this.n.push(r[key]);
             }
           } else {
-            this.n.push(r.globalStatistics[key]);
+            this.n.push(r[key]);
           }
         }
       }

@@ -8,6 +8,7 @@ import SmartTable from "vuejs-smart-table";
 import tooltipDirective from "@/directives/tooltip.directive";
 import HighchartsVue from "highcharts-vue";
 import _ from "lodash";
+
 Vue.use(SmartTable);
 Vue.use(_);
 Vue.use(HighchartsVue);

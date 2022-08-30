@@ -38,7 +38,7 @@ export default {
           },
         },
         xAxis: {
-          categories: this.weeks,
+          categories: this.weeks.reverse(),
         },
         series: [
           {
