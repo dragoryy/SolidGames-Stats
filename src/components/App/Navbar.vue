@@ -32,7 +32,7 @@
             ref="dropdown"
             style="font-weight: 700"
           >
-            © Phoenix, 2016-2022
+            © Phoenix, 2016-2023
           </a>
         </li>
       </ul>

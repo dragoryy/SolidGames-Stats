@@ -170,13 +170,6 @@ export default {
     this.tab = M.Tabs.init(this.$refs.tab, {
       duration: 50,
     });
-    let s = await fetch(`./stats/sg/all_time/squad_statistics.json`);
-    s = await s.json();
-    for (let key in s) {
-      this.squads.push(s[key].prefix);
-    }
-    this.squads.sort();
-    this.squads.unshift("[Одиночки]");
     let r = await fetch(`./stats/sg/rotations_info.json`);
     r = await r.json();
     for (let key in r) {
@@ -208,7 +201,31 @@ export default {
       title: "За все время",
     });
     this.period.reverse();
+    this.choosed = (await this.getInfo().period) || "За все время";
+    let rotationID = this.$refs.sq.selectedIndex;
+    console.log(rotationID, this.$refs.sq, this.$refs.sq.selectedIndex);
+    if (rotationID == 0) {
+      let s = await fetch(`./stats/sg/all_time/squad_statistics.json`);
+      s = await s.json();
+      for (let key in s) {
+        this.squads.push(s[key].prefix);
+      }
+    } else {
+      let s = await fetch(
+        `./stats/sg/rotation_${rotationID}/squad_statistics.json`
+      );
+      s = await s.json();
+      for (let key in s) {
+        this.squads.push(s[key].prefix);
+      }
+    }
+    this.squads.sort();
+    this.squads.unshift("[Одиночки]");
+
     if (this.$route.query.tag) {
+      console.log(this.squads);
+      console.log(this.squads.includes("[" + this.$route.query.tag + "]"));
+      console.log(this.squads.includes("[" + this.$route.query.tag + "]"));
       if (this.squads.includes("[" + this.$route.query.tag + "]")) {
         this.tag = "[" + this.$route.query.tag + "]";
       } else {
@@ -217,7 +234,7 @@ export default {
     } else {
       this.tag = this.getInfo().tag || "[FNX]";
     }
-    this.choosed = this.getInfo().period || "За все время";
+
     await this.refresh();
     this.dataLoaded = true;
   },
@@ -254,6 +271,14 @@ export default {
     async r() {
       this.loading = true;
       this.n = [];
+      this.squads = [];
+      let s = await fetch(`./stats/sg/all_time/squad_statistics.json`);
+      s = await s.json();
+      for (let key in s) {
+        this.squads.push(s[key].prefix);
+      }
+      this.squads.sort();
+      this.squads.unshift("[Одиночки]");
       let r = await fetch(`./stats/sg/all_time/global_statistics.json`);
       r = await r.json();
       let squads = await fetch(`./stats/sg/all_time/squad_statistics.json`);
@@ -286,6 +311,16 @@ export default {
       this.loading = true;
       this.n = [];
       let rotationID = this.period.length - this.$refs.sq.selectedIndex;
+      this.squads = [];
+      let s = await fetch(
+        `./stats/sg/rotation_${rotationID}/squad_statistics.json`
+      );
+      s = await s.json();
+      for (let key in s) {
+        this.squads.push(s[key].prefix);
+      }
+      this.squads.sort();
+      this.squads.unshift("[Одиночки]");
       let r = await fetch(
         `./stats/sg/rotation_${rotationID}/global_statistics.json`
       );

@@ -41,8 +41,9 @@ export default new Vuex.Store({
       newInfo.period = localStorage.getItem("period");
       newInfo.theme = localStorage.getItem("theme") === "true";
       newInfo.nick = localStorage.getItem("nick");
-      if (newInfo.period.includes("28 февр")) {
-        newInfo.period = "28 февр. 2022 г. - 3 июл. 2022 г.";
+      if (newInfo.period.includes("3 окт")) {
+        newInfo.period = "9 янв. 2023 г. - по настоящий момент.";
+        // localStorage.setItem("period", "3 окт. 2022 г. - по настоящий момент.");
       }
       commit("setLocalInfo", newInfo);
     },

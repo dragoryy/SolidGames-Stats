@@ -245,6 +245,7 @@ export default {
       let id = 1;
       for (let key in r) {
         if (r[key]) {
+          if (!r[key].isShow) continue;
           r[key].id = id;
           id++;
           if (r[key].lastSquadPrefix === null) {
@@ -271,6 +272,7 @@ export default {
       );
       r = await r.json();
       for (let key in r) {
+        if (!r[key].isShow) continue;
         if (r[key].lastSquadPrefix === null) {
           r[key].lastSquadPrefix = "";
         }
@@ -295,6 +297,7 @@ export default {
         if (r[key]) {
           r[key].id = id;
           id++;
+          if (!r[key].isShow) continue;
           if (r[key].lastSquadPrefix === null) {
             r[key].lastSquadPrefix = "";
           }

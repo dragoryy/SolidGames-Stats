@@ -219,6 +219,102 @@
               </v-table>
             </div>
           </li>
+          <li v-if="killed.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по убитым игрокам</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="killed" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Кол-во убийств</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="killers.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по смертям от игроков</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="killers" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Кол-во смертей от игрока</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="teamkilled.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по тимкиллам игроков</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="teamkilled" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Кол-во тимкиллов игрока</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="teamkillers.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по смертям от тимкилла игроками</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="teamkillers" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Смертей от игрока</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -417,6 +513,102 @@
               </v-table>
             </div>
           </li>
+          <li v-if="killed.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по убитым игрокам</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="killed" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Кол-во убийств</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="killers.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по смертям от игроков</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="killers" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Кол-во смертей от игрока</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="teamkilled.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по тимкиллам игроков</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="teamkilled" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Кол-во тимкиллов игрока</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
+          <li v-if="teamkillers.length">
+            <div class="collapsible-header">
+              <p class="center">Статистика по смертям от тимкилла игроками</p>
+              <span class="arrow"></span>
+            </div>
+            <div class="collapsible-body">
+              <v-table :data="teamkillers" class="responsive-table highlight">
+                <thead slot="head">
+                  <th><span>Место</span></th>
+                  <v-th sortKey="name"><span>Игрок</span></v-th>
+                  <v-th sortKey="count" defaultSort="desc"
+                    ><span>Смертей от игрока</span></v-th
+                  >
+                </thead>
+                <tbody slot="body" slot-scope="{ displayData }">
+                  <tr v-for="(row, index) in displayData" :key="row.id">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.count }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -444,6 +636,10 @@ export default {
     score: [],
     weeks: [],
     vehicles: [],
+    killed: [],
+    killers: [],
+    teamkilled: [],
+    teamkillers: [],
   }),
   components: {
     Chart,
@@ -505,6 +701,10 @@ export default {
       this.kdRatio = [];
       this.weeks = [];
       this.mace = [];
+      this.killers = [];
+      this.killed = [];
+      this.teamkilled = [];
+      this.teamkillers = [];
       setTimeout(() => {
         this.tab.updateTabIndicator();
         if (this.tab.$activeTabLink[0].href.includes("#sg")) {
@@ -538,6 +738,14 @@ export default {
           playerWeeks = await playerWeeks.json();
           let playerVehicles = playerWeapons.vehicles;
           playerWeapons = playerWeapons.firearms;
+          let playerInfo = await fetch(
+            `../stats/sg/all_time/other_players_statistics/${this.$route.params.nick}.json`
+          );
+          playerInfo = await playerInfo.json();
+          this.killed = playerInfo.killed;
+          this.killers = playerInfo.killers;
+          this.teamkilled = playerInfo.teamkilled;
+          this.teamkillers = playerInfo.teamkillers;
           this.weapons = playerWeapons.map((w, i) => {
             return { ...w, id: i };
           });
@@ -576,6 +784,14 @@ export default {
             `../stats/sg/rotation_${rotationID}/weeks_statistics/${this.$route.params.nick}.json`
           );
           playerWeeks = await playerWeeks.json();
+          let playerInfo = await fetch(
+            `../stats/sg/rotation_${rotationID}/other_players_statistics/${this.$route.params.nick}.json`
+          );
+          playerInfo = await playerInfo.json();
+          this.killed = playerInfo.killed;
+          this.killers = playerInfo.killers;
+          this.teamkilled = playerInfo.teamkilled;
+          this.teamkillers = playerInfo.teamkillers;
           this.byWeeks = playerWeeks;
           this.weapons = playerWeapons.map((w, i) => {
             return { ...w, id: i };
@@ -610,6 +826,14 @@ export default {
           let playerVehicles = playerWeapons.vehicles;
           playerWeapons = playerWeapons.firearms;
           playerWeeks = await playerWeeks.json();
+          let playerInfo = await fetch(
+            `../stats/mace/other_players_statistics/${this.$route.params.nick}.json`
+          );
+          playerInfo = await playerInfo.json();
+          this.killed = playerInfo.killed;
+          this.killers = playerInfo.killers;
+          this.teamkilled = playerInfo.teamkilled;
+          this.teamkillers = playerInfo.teamkillers;
           this.byWeeks = playerWeeks;
           this.weapons = playerWeapons.map((w, i) => {
             return { ...w, id: i };
